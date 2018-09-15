@@ -40,8 +40,10 @@ barplot(table(train$Sex, train$Survived),1,ylab = "Passenger Count",xlab = "Bina
 # Lets explore age
 summary(train$Age)
 
+# Change feature of children to be binary
 train$Child <- 0
 train$Child[train$Age < 18] <- 1
+
 
 aggregate(train$Survived ~ train$Child, data=train, FUN=function(x){sum(x)/length(x)})
 aggregate(train$Survived ~ train$Child + train$Sex, data=train, FUN=function(x){sum(x)/length(x)})
@@ -49,7 +51,6 @@ aggregate(train$Survived ~ train$Child + train$Sex, data=train, FUN=function(x){
 # Lets explore PClass
 
 summary(train$Pclass)
-
 aggregate(train$Survived ~ train$Pclass, data=train, FUN = sum)
 aggregate(train$Survived ~ train$Pclass, data=train, FUN = function(x){sum(x)/length(x)})
 aggregate(train$Survived ~  train$Child + train$Sex + train$Pclass, data=train, FUN=function(x){sum(x)/length(x)})
@@ -58,9 +59,9 @@ aggregate(train$Survived ~  train$Child + train$Sex + train$Pclass, data=train, 
 finalFit <- rpart(train$Survived ~ train$Pclass + train$Sex + train$Age, data=train, method="class")
 rpart.plot(finalFit)
 
-# Lets run a confusion matrix
-
+# Lets run a confusion matrix to test model
 prediction<-predict(finalFit,newdata=train)
+
 # Create test prediction variable that shows our model result
 train$Pred <- 0
 train$Pred <- ifelse(prediction[,2]>.5,1,0)
